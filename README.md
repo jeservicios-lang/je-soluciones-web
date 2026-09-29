@@ -1,27 +1,10 @@
-# JE Soluciones — Web Comercial v1
+# JE Soluciones — Web comercial
 
-Sitio estático listo para publicar en GitHub Pages u otro hosting estático.
+Sitio estático para GitHub Pages y dominio `jesolucionesdosquebradas.com`.
 
-## Dominio
-- `jesolucionesdosquebradas.com`
-- `CNAME` ya configurado para GitHub Pages.
+Incluye: JE IA de 3 pasos, servicios, electrónica y microelectrónica, trabajos, quiénes somos, visión, herramientas gratuitas, ubicación, WhatsApp, SEO básico, LocalBusiness JSON-LD, sitemap, robots y CNAME.
 
-## WhatsApp
-Número configurado: `+57 318 331 0300`.
+WhatsApp: +57 318 331 0300.
+Dirección: Calle 34 # 13-43, Local 2, Barrio Guadalupe, Dosquebradas, Risaralda.
 
-## Importante
-El sitio usa JE IA local (JavaScript) para orientación inicial, sin API de pago. Más adelante se puede conectar una IA real con backend sin cambiar la experiencia del cliente.
-
-## Google Workspace
-No modificar registros MX de Google Workspace al conectar el sitio. Solo deben cambiarse los registros web necesarios para el hosting elegido.
-
-## Publicación recomendada
-GitHub Pages permite publicar sitios estáticos desde un repositorio y admite dominios personalizados. Ver documentación oficial: https://docs.github.com/en/pages
-
-## Próximas fases
-1. Publicar esta versión.
-2. Conectar dominio sin tocar el correo de Google Workspace.
-3. Añadir páginas SEO individuales por servicio.
-4. Añadir galería de trabajos reales, reseñas y ubicación.
-5. Añadir panel/analytics y eventos de WhatsApp.
-6. Conectar JE IA a un modelo real cuando convenga.
+No requiere backend ni API de pago. JE IA funciona localmente en el navegador mediante reglas de orientación.
