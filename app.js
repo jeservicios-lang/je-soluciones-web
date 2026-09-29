@@ -29,3 +29,9 @@ function guess(text){const t=text.toLowerCase();if(/no.*imagen|pantalla.*negra|s
 document.querySelectorAll('[data-tool]').forEach(btn=>btn.addEventListener('click',()=>{const a=cases[btn.dataset.tool]||cases.other;const box=document.querySelector('#toolResult');box.hidden=false;box.innerHTML=`<div class="result-tag">JE IA · HERRAMIENTA</div><h3>${a.title}</h3><p>${a.detail}</p><ol>${a.steps.map(s=>`<li>${s}</li>`).join('')}</ol><a class="text-link" href="${wa(`Hola JE Soluciones 👋. Usé una herramienta de JE IA. Mi problema es: ${a.title}. Quiero solicitar orientación o revisión.`)}" target="_blank" rel="noopener">📲 Continuar con JE por WhatsApp →</a>`;box.scrollIntoView({behavior:'smooth',block:'center'})}));
 document.querySelectorAll('[data-wa]').forEach(a=>{a.href=wa(a.dataset.wa);a.target='_blank';a.rel='noopener'});
 document.querySelector('#year').textContent=new Date().getFullYear();
+
+const menuButton=document.querySelector('#menuToggle'),mainNav=document.querySelector('#mainNav');
+function closeMenu(){if(!menuButton||!mainNav)return;menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Abrir menú');mainNav.classList.remove('open')}
+menuButton?.addEventListener('click',()=>{const open=menuButton.getAttribute('aria-expanded')!=='true';menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'Cerrar menú':'Abrir menú');mainNav?.classList.toggle('open',open)});
+mainNav?.querySelectorAll('a').forEach(link=>link.addEventListener('click',closeMenu));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&mainNav?.classList.contains('open')){closeMenu();menuButton?.focus()}});
