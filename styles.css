@@ -214,3 +214,13 @@ footer{font-size:12px}
 
 .board-visual>video{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
 
+/* Acciones de contacto y confianza en reseñas de Google. */
+.btn.call{background:#13232d;color:#f6f7f4;border:1px solid #49606d;text-decoration:none;display:inline-flex;align-items:center}
+.btn.call:hover{border-color:#67cfc2;color:#67cfc2}
+.review-proof{display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:max-content;max-width:100%;margin-top:20px;padding:11px 14px;border:1px solid #263744;border-radius:6px;background:#101c27;color:#c6d1d3;text-decoration:none;font-size:13px}
+.review-proof:hover{border-color:#67cfc2}
+.review-stars{color:#f6c85f;letter-spacing:2px;font-size:15px}
+.review-proof strong{color:#f6f7f4}
+.review-link{margin-left:5px;color:#67cfc2;font-weight:700}
+@media(max-width:600px){.hero .actions{align-items:stretch}.hero .actions .btn{justify-content:center}.review-proof{font-size:12px;gap:6px}.review-link{width:100%;margin-left:0}}
+
