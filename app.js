@@ -11,24 +11,40 @@ const cases={
  audio:{title:'Audio',detail:'Puede ser configuración, controlador, salida seleccionada, conector o hardware.',steps:['Revisa volumen y dispositivo de salida.','Prueba audífonos y altavoces.','Reinicia el equipo.','Si solo falla una salida, puede requerir revisión.']},
  other:{title:'Otro problema',detail:'Organiza la información antes de contactar a JE: qué equipo es, qué ocurrió y qué señales presenta.',steps:['Anota marca y modelo si los conoces.','Describe qué ocurrió justo antes de la falla.','Indica luces, sonidos o mensajes que aparezcan.','Cuéntanos qué pruebas ya realizaste.']}
 };
-const typeLabels={desktop:'Computador de escritorio',laptop:'Portátil',other:'Otro equipo electrónico'};
-const symptomLabels={power:'No enciende / no prende',noimage:'Enciende pero no da imagen',slow:'Está lento / se bloquea',hot:'Se calienta / se apaga',battery:'No carga / batería',other:'Otro comportamiento'};
+const typeLabels={desktop:'Computador de escritorio',laptop:'Computador portátil',other:'Otro equipo electrónico'};
+const symptomLabels={power:'No enciende / no prende',noimage:'Enciende pero no da imagen',slow:'Está lento / se bloquea',hot:'Se calienta / se apaga',battery:'No carga / batería',internet:'Internet o Wi-Fi',audio:'Falla de audio',other:'Otro comportamiento'};
 let ai={step:1,type:'',symptom:'',details:''};
-const q=document.querySelector('#aiQuestion'), opts=document.querySelector('#aiOptions'), result=document.querySelector('#aiResult'), stepLabel=document.querySelector('#stepLabel'), bar=document.querySelector('#progressBar');
-function renderAI(){
- stepLabel.textContent=`Paso ${ai.step} de 3`;bar.style.width=`${(ai.step/3)*100}%`;result.hidden=true;
- if(ai.step===1){q.innerHTML='<h3>¿Qué equipo presenta el problema?</h3>';opts.innerHTML=Object.entries(typeLabels).map(([k,v])=>`<button data-ai="type" data-value="${k}">${v} →</button>`).join('');}
- if(ai.step===2){q.innerHTML='<h3>¿Qué está haciendo el equipo?</h3>';opts.innerHTML=Object.entries(symptomLabels).map(([k,v])=>`<button data-ai="symptom" data-value="${k}">${v} →</button>`).join('');}
- if(ai.step===3){q.innerHTML='<h3>Cuéntanos un poco más.</h3><p class="question-help">Ejemplo: “prende, el ventilador gira, pero la pantalla queda negra”.</p><textarea id="aiDetails" maxlength="500" placeholder="Describe lo que ves, escuchas o cuándo ocurre..."></textarea><button class="continue" id="finishAI">Generar orientación →</button>'}
- opts.querySelectorAll('[data-ai]').forEach(b=>b.addEventListener('click',()=>{ai[b.dataset.ai]=b.dataset.value;ai.step++;renderAI()}));
- const f=document.querySelector('#finishAI');if(f)f.addEventListener('click',finishAI);
+const q=document.querySelector('#aiQuestion'), opts=document.querySelector('#aiOptions'), result=document.querySelector('#aiResult'), stepLabel=document.querySelector('#stepLabel'), bar=document.querySelector('#progressBar'), progress=document.querySelector('#aiProgress'), backButton=document.querySelector('#backAI'), controlHint=document.querySelector('#controlHint'), mascotTitle=document.querySelector('#mascotTitle'), mascotMessage=document.querySelector('#mascotMessage');
+function updateGuide(done=false){
+ if(done){mascotTitle.textContent='¡Listo!';mascotMessage.textContent='Ya preparé una guía inicial. Si quieres, envío tu resumen directamente al equipo de JE.';return;}
+ if(ai.step===1){mascotTitle.textContent='¡Hola! Soy JE.';mascotMessage.textContent='Elige tu equipo y te acompaño paso a paso.';}
+ if(ai.step===2){mascotTitle.textContent='Ya casi lo tenemos.';mascotMessage.textContent=`¿Qué problema presenta tu ${typeLabels[ai.type]?.toLowerCase()||'equipo'}?`;}
+ if(ai.step===3){mascotTitle.textContent='Cuéntame un poco más.';mascotMessage.textContent='Descríbeme qué ves o cuándo sucede. No compartas contraseñas ni datos privados.';}
 }
-function finishAI(){const d=document.querySelector('#aiDetails');ai.details=(d?.value||'').trim()||'Sin descripción adicional.';const base=cases[ai.symptom]||cases.other;const message=`Hola JE Soluciones 👋. Vengo desde JE IA.\nEquipo: ${typeLabels[ai.type]}\nProblema: ${symptomLabels[ai.symptom]}\nDetalle: ${ai.details}`;result.hidden=false;result.innerHTML=`<div class="result-tag">ORIENTACIÓN INICIAL</div><h3>${base.title}</h3><p>${base.detail}</p><ol>${base.steps.map(s=>`<li>${s}</li>`).join('')}</ol><div class="result-actions"><a class="btn primary" href="${wa(message+'\n\nQuiero solicitar revisión con JE.')}" target="_blank" rel="noopener">📲 Enviar mi caso a JE</a><button class="btn reset" id="resetAI">↻ Empezar de nuevo</button></div><small>La orientación no identifica con certeza la causa y no sustituye un diagnóstico técnico.</small>`;document.querySelector('#resetAI').onclick=()=>{ai={step:1,type:'',symptom:'',details:''};renderAI()};stepLabel.textContent='Resultado';bar.style.width='100%';}
+function renderAI(){
+ result.hidden=true;stepLabel.textContent=`Paso ${ai.step} de 3`;bar.style.width=`${(ai.step/3)*100}%`;progress.setAttribute('aria-valuenow',String(ai.step));backButton.hidden=ai.step===1;
+ controlHint.textContent=ai.step===1?'Elige una opción para continuar.':ai.step===2?'Puedes volver si deseas cambiar de equipo.':'Tus respuestas se guardan si vuelves al paso anterior.';updateGuide();
+ if(ai.step===1){q.innerHTML='<h3>¿Qué equipo presenta el problema?</h3>';opts.innerHTML=Object.entries(typeLabels).map(([k,v])=>`<button type="button" class="${ai.type===k?'selected':''}" aria-pressed="${ai.type===k}" data-ai="type" data-value="${k}">${v}<span aria-hidden="true"> →</span></button>`).join('');}
+ if(ai.step===2){q.innerHTML='<h3>¿Qué le está ocurriendo?</h3>';opts.innerHTML=Object.entries(symptomLabels).map(([k,v])=>`<button type="button" class="${ai.symptom===k?'selected':''}" aria-pressed="${ai.symptom===k}" data-ai="symptom" data-value="${k}">${v}<span aria-hidden="true"> →</span></button>`).join('');}
+ if(ai.step===3){q.innerHTML='<h3>Cuéntame cuándo o cómo ocurre.</h3><p class="question-help">Ejemplo: “enciende, pero la pantalla queda negra”.</p>';opts.innerHTML=`<textarea id="aiDetails" maxlength="500" placeholder="Escribe aquí los detalles (opcional)...">${esc(ai.details)}</textarea><button class="continue" id="finishAI" type="button">Ver mi orientación →</button>`;document.querySelector('#aiDetails').addEventListener('input',event=>{ai.details=event.target.value;});}
+ opts.querySelectorAll('[data-ai]').forEach(button=>button.addEventListener('click',()=>{ai[button.dataset.ai]=button.dataset.value;ai.step++;renderAI();}));
+ const finish=document.querySelector('#finishAI');if(finish)finish.addEventListener('click',finishAI);
+}
+function finishAI(){
+ const details=document.querySelector('#aiDetails');ai.details=(details?.value||ai.details||'').trim()||'Sin descripción adicional.';const base=cases[ai.symptom]||cases.other;const message=`Hola JE Soluciones 👋. Vengo desde JE IA.\nEquipo: ${typeLabels[ai.type]}\nProblema: ${symptomLabels[ai.symptom]}\nDetalle: ${ai.details}`;
+ result.hidden=false;result.innerHTML=`<div class="result-tag">ORIENTACIÓN INICIAL</div><h3>${base.title}</h3><p>${base.detail}</p><ol>${base.steps.map(step=>`<li>${step}</li>`).join('')}</ol><div class="result-actions"><a class="btn primary" href="${wa(message+'\n\nQuiero solicitar revisión con JE.') }" target="_blank" rel="noopener">📲 Enviar mi caso a JE</a><button class="btn reset" id="resetAI" type="button">↻ Empezar de nuevo</button></div><small>Esta guía no identifica con certeza la causa ni reemplaza un diagnóstico técnico.</small>`;
+ stepLabel.textContent='Orientación lista';bar.style.width='100%';progress.setAttribute('aria-valuenow','3');backButton.hidden=false;controlHint.textContent='Puedes volver para ajustar el problema o las respuestas.';updateGuide(true);
+ document.querySelector('#resetAI').addEventListener('click',()=>{ai={step:1,type:'',symptom:'',details:''};renderAI();document.querySelector('#aiOptions button')?.focus();});
+}
+backButton.addEventListener('click',()=>{if(!result.hidden){result.hidden=true;stepLabel.textContent=`Paso ${ai.step} de 3`;controlHint.textContent='Tus respuestas se guardan si vuelves al paso anterior.';updateGuide();return;}if(ai.step>1){ai.step--;renderAI();}});
 renderAI();
 function guess(text){const t=text.toLowerCase();if(/no.*imagen|pantalla.*negra|sin.*imagen/.test(t))return'noimage';if(/lento|lenta|traba|pegado/.test(t))return'slow';if(/no.*enciende|no.*prende|muerto/.test(t))return'power';if(/calienta|caliente|sobrecal|temperatura/.test(t))return'hot';if(/carg|bater/.test(t))return'battery';if(/internet|wifi|wi-fi|red/.test(t))return'internet';if(/audio|sonido|parlante|altavoz/.test(t))return'audio';return'other';}
 document.querySelectorAll('[data-tool]').forEach(btn=>btn.addEventListener('click',()=>{const a=cases[btn.dataset.tool]||cases.other;const box=document.querySelector('#toolResult');box.hidden=false;box.innerHTML=`<div class="result-tag">JE IA · HERRAMIENTA</div><h3>${a.title}</h3><p>${a.detail}</p><ol>${a.steps.map(s=>`<li>${s}</li>`).join('')}</ol><a class="text-link" href="${wa(`Hola JE Soluciones 👋. Usé una herramienta de JE IA. Mi problema es: ${a.title}. Quiero solicitar orientación o revisión.`)}" target="_blank" rel="noopener">📲 Continuar con JE por WhatsApp →</a>`;box.scrollIntoView({behavior:'smooth',block:'center'})}));
 document.querySelectorAll('[data-wa]').forEach(a=>{a.href=wa(a.dataset.wa);a.target='_blank';a.rel='noopener'});
 document.querySelector('#year').textContent=new Date().getFullYear();
+
+const floatingAI=document.querySelector('.floating'), guidanceSection=document.querySelector('#je-ia');
+if(floatingAI&&guidanceSection&&'IntersectionObserver' in window){new IntersectionObserver(entries=>floatingAI.classList.toggle('ai-in-view',entries[0]?.isIntersecting),{threshold:.15}).observe(guidanceSection);}
 
 const menuButton=document.querySelector('#menuToggle'),mainNav=document.querySelector('#mainNav');
 function closeMenu(){if(!menuButton||!mainNav)return;menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Abrir menú');mainNav.classList.remove('open')}
