@@ -224,3 +224,19 @@ footer{font-size:12px}
 .review-link{margin-left:5px;color:#67cfc2;font-weight:700}
 @media(max-width:600px){.hero .actions{align-items:stretch}.hero .actions .btn{justify-content:center}.review-proof{font-size:12px;gap:6px}.review-link{width:100%;margin-left:0}}
 
+/* Electric service-at-home call badge. */
+@property --electric-angle{syntax:"<angle>";inherits:false;initial-value:0deg}
+.home-service-badge{position:fixed;left:20px;bottom:22px;z-index:59;display:flex;align-items:center;gap:11px;width:270px;max-width:calc(100vw - 102px);padding:11px 15px;border:2px solid transparent;border-radius:12px;background:linear-gradient(#0c1820,#0c1820) padding-box,conic-gradient(from var(--electric-angle),#27424c,#67cfc2 9%,#e1fff9 11%,#2d9c96 15%,#152731 22%,#67cfc2 31%,#182b34 39%,#c8fff5 42%,#26545c 48%,#0c1820 57%,#67cfc2 67%,#203e49 77%,#e1fff9 80%,#26545c 84%,#0c1820 92%) border-box;color:#f6f7f4;text-decoration:none;box-shadow:0 0 10px #67cfc255,0 8px 28px #0008;animation:electric-orbit 5s linear infinite,service-badge-glow 2.7s ease-in-out infinite}
+.home-service-badge::after{content:"✦";position:absolute;top:-10px;right:22px;color:#c8fff5;font-size:15px;text-shadow:0 0 9px #67cfc2;animation:electric-spark 1.8s ease-in-out infinite}
+.home-service-badge:hover{transform:translateY(-2px);box-shadow:0 0 17px #67cfc288,0 10px 30px #0009}
+.home-service-badge__bolt{flex:none;color:#8ff8e8;font-size:23px;line-height:1;text-shadow:0 0 10px #67cfc2}
+.home-service-badge__copy{display:grid;min-width:0;line-height:1.25}
+.home-service-badge__title{font-size:10px;letter-spacing:.08em;font-weight:900;color:#d8fff7}
+.home-service-badge__copy strong{font-size:17px;letter-spacing:.04em;color:#fff}
+.home-service-badge__copy small{font-size:9px;color:#9dafb6;white-space:nowrap}
+@keyframes electric-orbit{to{--electric-angle:360deg}}
+@keyframes service-badge-glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.14)}}
+@keyframes electric-spark{0%,100%{opacity:.25;transform:scale(.7) rotate(0)}45%{opacity:1;transform:scale(1.15) rotate(24deg)}70%{opacity:.45;transform:scale(.85) rotate(-12deg)}}
+@media(max-width:600px){.home-service-badge{left:10px;bottom:11px;gap:8px;width:240px;max-width:calc(100vw - 92px);padding:9px 10px;border-radius:10px}.home-service-badge__bolt{font-size:20px}.home-service-badge__title{font-size:9px}.home-service-badge__copy strong{font-size:15px}.home-service-badge__copy small{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.home-service-badge,.home-service-badge::after{animation:none}}
+
